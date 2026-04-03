@@ -2,6 +2,7 @@ package com.example.emostore.service;
 
 import com.example.emostore.dto.OrderItemRequest;
 import com.example.emostore.dto.OrderRequest;
+import com.example.emostore.exception.ResourceNotFoundException;
 import com.example.emostore.model.Order;
 import com.example.emostore.model.OrderItem;
 import com.example.emostore.model.Product;
@@ -9,6 +10,8 @@ import com.example.emostore.model.User;
 import com.example.emostore.repository.OrderRepository;
 import com.example.emostore.repository.ProductRepository;
 import com.example.emostore.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,48 +21,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository) {
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.userRepository = userRepository;
-    }
-
     @Transactional
     public Order createOrder(OrderRequest orderRequest, String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("Creating order for user: {}", email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
-        Order order = new Order();
-        order.setUser(user);
-        order.setOrderDate(LocalDateTime.now());
-        order.setPaymentMethod(orderRequest.getPaymentMethod());
+        Order order = Order.builder()
+                .user(user)
+                .orderDate(LocalDateTime.now())
+                .paymentMethod(orderRequest.getPaymentMethod())
+                .items(new ArrayList<>())
+                .build();
 
-        List<OrderItem> items = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (OrderItemRequest itemRequest : orderRequest.getItems()) {
-            Long productId = itemRequest.getProductId();
-            if (productId == null) throw new RuntimeException("Product ID cannot be null");
-            
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            Product product = productRepository.findById(itemRequest.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + itemRequest.getProductId()));
 
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(product);
-            orderItem.setQuantity(itemRequest.getQuantity());
-            orderItem.setPrice(product.getPrice());
-            items.add(orderItem);
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(itemRequest.getQuantity())
+                    .price(product.getPrice())
+                    .build();
+            order.getItems().add(orderItem);
 
             totalAmount = totalAmount.add(product.getPrice().multiply(new BigDecimal(itemRequest.getQuantity())));
         }
 
-        order.setItems(items);
         order.setTotalAmount(totalAmount);
 
         if ("COD".equalsIgnoreCase(orderRequest.getPaymentMethod())) {
@@ -70,13 +69,27 @@ public class OrderService {
             order.setStatus("PENDING_PAYMENT");
         }
 
-        Order savedOrder = orderRepository.save(order);
-        return savedOrder;
+        return orderRepository.save(order);
     }
 
-
     public List<Order> getUserOrders(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        log.debug("Fetching orders for user: {}", email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return orderRepository.findByUserId(user.getId());
+    }
+
+    public List<Order> getAllOrders() {
+        log.info("Fetching all orders for admin");
+        return orderRepository.findAll();
+    }
+
+    @Transactional
+    public Order updateOrderStatus(Long id, String status) {
+        log.info("Updating order status for id: {} to {}", id, status);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+        order.setStatus(status);
+        return orderRepository.save(order);
     }
 }

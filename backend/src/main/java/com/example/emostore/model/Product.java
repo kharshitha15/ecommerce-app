@@ -1,48 +1,44 @@
 package com.example.emostore.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Product name is required")
     @Column(nullable = false)
     private String name;
 
     @Column(length = 2000)
     private String description;
 
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
     @Column(nullable = false)
     private BigDecimal price;
 
     private String imageUrl;
     
+    @NotNull(message = "Stock quantity is required")
     private Integer stockQuantity;
+    
     private String category;
-
-    public Product() {}
-    public Product(Long id, String name, String description, BigDecimal price, String imageUrl, Integer stockQuantity, String category) {
-        this.id = id; this.name = name; this.description = description; this.price = price;
-        this.imageUrl = imageUrl; this.stockQuantity = stockQuantity; this.category = category;
-    }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    public Integer getStockQuantity() { return stockQuantity; }
-    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
 }

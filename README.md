@@ -1,99 +1,88 @@
-# EmoStore - Premium Full Stack E-commerce Platform
+# Emostore - Professional E-commerce Backend
 
-![EmoStore Homepage](./assets/homepage.png)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-orange)](https://www.oracle.com/java/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 Overview
-EmoStore is a professional-grade, high-performance e-commerce platform built with a modern full-stack architecture. It features a robust **Java Spring Boot** backend, a scalable **MySQL** database, and a sleek, responsive **React** frontend. Designed with scalability and professional standards in mind, EmoStore delivers a seamless shopping experience.
-
----
-
-## ✨ Key Features
--   🔐 **Secure Authentication**: JWT-based login and registration with role-based access control (Admin/Customer).
--   🛒 **Shopping Experience**: Dynamic product catalog, categories, and a persistent shopping cart.
--   💳 **Integrated Payments**: Secure checkout with **Razorpay** integration.
--   📊 **Admin Dashboard**: Comprehensive management of products, inventory, and order statuses.
--   📦 **Order Tracking**: Real-time order placement, history, and status tracking.
--   🎨 **Modern UI**: Built with React and Tailwind CSS for a premium look and feel.
--   🛠️ **REST API**: Well-documented and scalable backend architecture.
+Emostore is a robust, production-ready e-commerce backend platform built with Java Spring Boot. It follows Clean Architecture principles and implements state-of-the-art security practices to deliver a scalable and secure shopping experience.
 
 ---
 
-## 🛠️ Technology Stack
+## ✨ Features
 
-### Backend
-- **Framework**: Java 17, Spring Boot 3.x
-- **Security**: Spring Security, JWT (JSON Web Tokens)
-- **Database**: MySQL (Production-ready)
+### 🔐 Authentication & Security
+- **JWT Authentication**: Secure stateless authentication using JSON Web Tokens.
+- **RBAC (Role-Based Access Control)**: Fine-grained permissions for Admin and User roles.
+- **Spring Security**: Modern filter-chain-based security configuration.
+
+### 📦 Product Management
+- **Full CRUD**: Admin endpoints for product creation, updates, and deletion.
+- **Image Uploads**: Integrated local storage for product images with UUID-based unique naming.
+- **Public Catalog**: Optimized endpoints for product discovery and search.
+
+### 🛒 Cart & Order Modules
+- **Persistent Shopping Cart**: User-specific cart management persisted in the database.
+- **Secure Checkout**: Streamlined order placement with support for multiple payment methods.
+- **Razorpay Integration**: Built-in support for secure online payments.
+
+### 🛠️ Professional Standards
+- **Global Exception Handling**: Centralized error management with user-friendly messages.
+- **Data Transfer Objects (DTOs)**: Complete separation of database entities from API responses.
+- **Input Validation**: Robust validation of request bodies using Spring Validation.
+- **Logging**: Detailed logging for auditing and debugging.
+
+---
+
+## 🛠️ Tech Stack
+- **Backend**: Java 17, Spring Boot 3.x
+- **Security**: Spring Security, JJWT
+- **Database**: H2 (In-memory/File-demo), MySQL (Production-ready)
+- **Data Access**: Spring Data JPA (Hibernate)
+- **Documentation**: Swagger/OpenAPI 3
 - **Build Tool**: Maven
-
-### Frontend
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **State Management**: React Context API
-- **Networking**: Axios
-
----
-
-## 📁 Repository Structure
-```bash
-├── backend/        # Spring Boot application
-├── frontend/       # React + Vite application
-├── assets/         # Project screenshots and documentation media
-└── README.md       # Project documentation
-```
+- **Lombok**: Reduced boilerplate code
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
--   **JDK 17+**
--   **Node.js 18+**
--   **Maven 3.8+**
+- JDK 17 or higher
+- Maven 3.8+
 
-### Backend Setup
-1.  **Navigate to backend**:
-    ```bash
-    cd backend
-    ```
-2.  **Configuration**: 
-    - Database settings are in `src/main/resources/application.properties`. 
-    - By default, it uses a file-based H2 database (no installation needed).
-3.  **Run Application**:
-    ```bash
-    ./mvnw spring-boot:run
-    ```
-    *The server will start at `http://localhost:8081`.*
+### Database Configuration
+By default, the application uses a file-based H2 database for zero-setup demonstration. To switch to MySQL, update `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/emostoredb
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
 
-### Frontend Setup
-1.  **Navigate to frontend**:
-    ```bash
-    cd frontend
-    ```
-2.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-3.  **Run Development Server**:
-    ```bash
-    npm run dev
-    ```
-    *Open `http://localhost:5173` to view the app.*
+### Running the Application
+1. Clone the repository and navigate to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Build and run:
+   ```bash
+   mvn spring-boot:run
+   ```
+3. The server will start at `http://localhost:8081`.
 
 ---
 
 ## 📑 API Documentation
-The backend exposes several endpoints for common e-commerce operations:
-- `POST /api/v1/auth/login` - Authenticate users
-- `GET /api/v1/products` - List all available products
-- `POST /api/v1/orders` - Place a new order
-- `GET /api/v1/admin/orders` - Manage order statuses (Admin only)
+Explore and test the APIs interactively using Swagger UI:
+- **Swagger URL**: `http://localhost:8081/swagger-ui/index.html`
+
+### Key Endpoints:
+- `POST /api/v1/auth/register` - User Registration
+- `POST /api/v1/auth/login` - User Login
+- `GET /api/v1/user/cart` - View User Cart
+- `POST /api/v1/user/orders` - Place Order
+- `GET /api/v1/admin/dashboard/stats` - Admin Analytics
 
 ---
 
 ## 👤 Author
-Developed as a professional showcase project for a React/Spring Boot portfolio.
-
-## 📄 License
-This project is licensed under the MIT License.
+Developed as a showcase of modern Spring Boot capabilities for professional recruitment.

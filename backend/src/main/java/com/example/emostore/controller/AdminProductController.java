@@ -1,7 +1,8 @@
 package com.example.emostore.controller;
 
-import com.example.emostore.model.Product;
-import com.example.emostore.repository.ProductRepository;
+import com.example.emostore.dto.ProductDTO;
+import com.example.emostore.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -14,24 +15,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/admin/products")
+@RequiredArgsConstructor
 public class AdminProductController {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Value("${upload.dir}")
     private String uploadDir;
 
-    public AdminProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     @PostMapping
-    public ResponseEntity<Product> addProduct(
+    public ResponseEntity<ProductDTO> addProduct(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
             @RequestParam("price") BigDecimal price,
@@ -39,23 +36,24 @@ public class AdminProductController {
             @RequestParam("category") String category,
             @RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-        Product product = new Product();
-        product.setName(name);
-        product.setDescription(description);
-        product.setPrice(price);
-        product.setStockQuantity(stockQuantity);
-        product.setCategory(category);
+        ProductDTO productDTO = ProductDTO.builder()
+                .name(name)
+                .description(description)
+                .price(price)
+                .stockQuantity(stockQuantity)
+                .category(category)
+                .build();
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = saveFile(imageFile);
-            product.setImageUrl("/images/" + fileName);
+            productDTO.setImageUrl("/images/" + fileName);
         }
 
-        return ResponseEntity.ok(productRepository.save(product));
+        return ResponseEntity.ok(productService.createProduct(productDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> editProduct(
+    public ResponseEntity<ProductDTO> editProduct(
             @PathVariable Long id,
             @RequestParam("name") String name,
             @RequestParam("description") String description,
@@ -64,25 +62,26 @@ public class AdminProductController {
             @RequestParam("category") String category,
             @RequestParam(value = "image", required = false) MultipartFile imageFile) throws IOException {
 
-        Product product = productRepository.findById(id).orElseThrow();
-        product.setName(name);
-        product.setDescription(description);
-        product.setPrice(price);
-        product.setStockQuantity(stockQuantity);
-        product.setCategory(category);
+        ProductDTO productDTO = ProductDTO.builder()
+                .name(name)
+                .description(description)
+                .price(price)
+                .stockQuantity(stockQuantity)
+                .category(category)
+                .build();
 
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = saveFile(imageFile);
-            product.setImageUrl("/images/" + fileName);
+            productDTO.setImageUrl("/images/" + fileName);
         }
 
-        return ResponseEntity.ok(productRepository.save(product));
+        return ResponseEntity.ok(productService.updateProduct(id, productDTO));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-        productRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
     private String saveFile(MultipartFile file) throws IOException {

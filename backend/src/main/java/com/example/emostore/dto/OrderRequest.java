@@ -1,20 +1,16 @@
 package com.example.emostore.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderRequest {
     private List<OrderItemRequest> items;
     private String paymentMethod;
-
-    public OrderRequest() {}
-    public OrderRequest(List<OrderItemRequest> items, String paymentMethod) { 
-        this.items = items; 
-        this.paymentMethod = paymentMethod;
-    }
-    
-    public List<OrderItemRequest> getItems() { return items; }
-    public void setItems(List<OrderItemRequest> items) { this.items = items; }
-    
-    public String getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
 }
