@@ -109,5 +109,37 @@ Interactive documentation is available via Swagger UI:
 
 ---
 
+## 📸 Project Screenshots
+
+> [!TIP]
+> To reproduce these screenshots, use **Postman** or **Insomnia** to interact with the API endpoints and **MySQL Workbench** or **phpMyAdmin** to view the database tables.
+
+### 🔐 User Authentication (JWT)
+The login API securely authenticates users and returns a **JWT (JSON Web Token)** that must be used for subsequent authorized requests.
+![User Login](images/login.png)
+*Caption: JWT token generated after successful login and authentication.*
+
+### 📦 Product Management (CRUD)
+The product API provides endpoints for fetching the public catalog and managing products from the admin panel.
+![Product API](images/products.png)
+*Caption: GET request fetching the categorized product list via ApiResponse DTO.*
+
+### 🛒 Shopping Cart Lifecycle
+Users can persist their shopping cart state across sessions, allowing them to add or remove items before checkout.
+![Cart API](images/cart.png)
+*Caption: Cart state management showing updated subtotals and item quantities.*
+
+### 💳 Order Placement & Processing
+The checkout flow simulates a real-world transaction, integrating with Razorpay for secure payments.
+![Order API](images/order.png)
+*Caption: Response showing a successfully placed order with payment simulation status.*
+
+### 🗄️ Database Schema (MySQL)
+Our database follows professional normalization standards, with clear relationships between Users, Products, Categories, and Orders.
+![Database Tables](images/database.png)
+*Caption: MySQL Workbench view showing verified records in the normalized e-commerce schema.*
+
+---
+
 ## 👤 Author
 Developed as a production-grade e-commerce backend showcase.
