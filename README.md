@@ -26,63 +26,88 @@ Emostore is a robust, production-ready e-commerce backend platform built with Ja
 - **Razorpay Integration**: Built-in support for secure online payments.
 
 ### 🛠️ Professional Standards
-- **Global Exception Handling**: Centralized error management with user-friendly messages.
-- **Data Transfer Objects (DTOs)**: Complete separation of database entities from API responses.
-- **Input Validation**: Robust validation of request bodies using Spring Validation.
-- **Logging**: Detailed logging for auditing and debugging.
+- **Global Exception Handling**: Centralized error management with specialized `@ControllerAdvice` and custom `ApiResponse` DTO.
+- **Data Transfer Objects (DTOs)**: Complete isolation of database entities from public API responses.
+- **Input Validation**: Mandatory request body validation using Jakarta `@Valid` at the controller layer.
+- **Clean Architecture**: Strictly enforced package layering: `controller`, `service`, `repository`, `model`, `dto`, `security`, `exception`.
 
 ---
 
 ## 🛠️ Tech Stack
 - **Backend**: Java 17, Spring Boot 3.x
-- **Security**: Spring Security, JJWT
-- **Database**: H2 (In-memory/File-demo), MySQL (Production-ready)
-- **Data Access**: Spring Data JPA (Hibernate)
-- **Documentation**: Swagger/OpenAPI 3
-- **Build Tool**: Maven
-- **Lombok**: Reduced boilerplate code
+- **Security**: Spring Security, JJWT (JWT)
+- **Database**: MySQL (Primary), H2 (Local Demo)
+- **Data Access**: Spring Data JPA / Hibernate
+- **Deployment**: AWS (EC2 + RDS) ready
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- JDK 17 or higher
+- JDK 17+
 - Maven 3.8+
+- MySQL Server
 
 ### Database Configuration
-By default, the application uses a file-based H2 database for zero-setup demonstration. To switch to MySQL, update `src/main/resources/application.properties`:
+Update `src/main/resources/application.properties` with your MySQL credentials:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/emostoredb
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+spring.datasource.username=root
+spring.datasource.password=password
+spring.jpa.hibernate.ddl-auto=update
 ```
 
 ### Running the Application
-1. Clone the repository and navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-2. Build and run:
-   ```bash
-   mvn spring-boot:run
-   ```
-3. The server will start at `http://localhost:8081`.
+1.  Navigate to the backend directory:
+    ```bash
+    cd backend
+    ```
+2.  Install dependencies and run:
+    ```bash
+    mvn spring-boot:run
+    ```
 
 ---
 
 ## 📑 API Documentation
-Explore and test the APIs interactively using Swagger UI:
+Interactive documentation is available via Swagger UI:
 - **Swagger URL**: `http://localhost:8081/swagger-ui/index.html`
 
 ### Key Endpoints:
-- `POST /api/v1/auth/register` - User Registration
-- `POST /api/v1/auth/login` - User Login
-- `GET /api/v1/user/cart` - View User Cart
-- `POST /api/v1/user/orders` - Place Order
-- `GET /api/v1/admin/dashboard/stats` - Admin Analytics
+| Method | Endpoint | Description | Role |
+| :--- | :--- | :--- | :--- |
+| POST | `/api/v1/auth/register` | User Registration | Public |
+| POST | `/api/v1/auth/login` | User Login | Public |
+| GET | `/api/v1/products` | View All Products | Public |
+| USER | `/api/v1/user/cart` | Cart Management | USER |
+| ADMIN | `/api/v1/admin/products` | CRUD Products | ADMIN |
+
+---
+
+## ☁️ Deployment Guide (AWS)
+
+### 1. Database (Amazon RDS)
+- Create a MySQL instance in Amazon RDS.
+- Update `application.properties` with the RDS endpoint, username, and password.
+
+### 2. Computing (Amazon EC2)
+- Launch a Linux EC2 instance.
+- Install Java 17 on the instance:
+    ```bash
+    sudo yum install java-17-amazon-corretto
+    ```
+- Upload the JAR file (generated via `mvn clean package`) to the EC2 instance.
+- Run the JAR:
+    ```bash
+    java -jar emostore-backend.jar
+    ```
+
+### 3. Security Groups
+- Ensure port 8081 (or your custom port) is open in the EC2 security group.
+- Allow the EC2 security group to access the RDS instance on port 3306.
 
 ---
 
 ## 👤 Author
-Developed as a showcase of modern Spring Boot capabilities for professional recruitment.
+Developed as a production-grade e-commerce backend showcase.

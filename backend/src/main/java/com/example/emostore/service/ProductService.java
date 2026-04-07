@@ -2,7 +2,9 @@ package com.example.emostore.service;
 
 import com.example.emostore.dto.ProductDTO;
 import com.example.emostore.exception.ResourceNotFoundException;
+import com.example.emostore.model.Category;
 import com.example.emostore.model.Product;
+import com.example.emostore.repository.CategoryRepository;
 import com.example.emostore.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<ProductDTO> getAllProducts() {
         log.info("Fetching all products");
@@ -35,6 +38,13 @@ public class ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
         log.info("Creating new product: {}", productDTO.getName());
         Product product = convertToEntity(productDTO);
+        
+        if (productDTO.getCategoryName() != null) {
+            Category category = categoryRepository.findByName(productDTO.getCategoryName())
+                    .orElseGet(() -> categoryRepository.save(Category.builder().name(productDTO.getCategoryName()).build()));
+            product.setCategory(category);
+        }
+        
         Product savedProduct = productRepository.save(product);
         return convertToDTO(savedProduct);
     }
@@ -49,7 +59,12 @@ public class ProductService {
         existingProduct.setPrice(productDTO.getPrice());
         existingProduct.setImageUrl(productDTO.getImageUrl());
         existingProduct.setStockQuantity(productDTO.getStockQuantity());
-        existingProduct.setCategory(productDTO.getCategory());
+        
+        if (productDTO.getCategoryName() != null) {
+            Category category = categoryRepository.findByName(productDTO.getCategoryName())
+                    .orElseGet(() -> categoryRepository.save(Category.builder().name(productDTO.getCategoryName()).build()));
+            existingProduct.setCategory(category);
+        }
         
         Product updatedProduct = productRepository.save(existingProduct);
         return convertToDTO(updatedProduct);
@@ -77,7 +92,7 @@ public class ProductService {
                 .price(product.getPrice())
                 .imageUrl(product.getImageUrl())
                 .stockQuantity(product.getStockQuantity())
-                .category(product.getCategory())
+                .categoryName(product.getCategory() != null ? product.getCategory().getName() : null)
                 .build();
     }
 
@@ -89,7 +104,6 @@ public class ProductService {
                 .price(dto.getPrice())
                 .imageUrl(dto.getImageUrl())
                 .stockQuantity(dto.getStockQuantity())
-                .category(dto.getCategory())
                 .build();
     }
 }

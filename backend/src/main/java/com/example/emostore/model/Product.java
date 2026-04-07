@@ -40,5 +40,7 @@ public class Product {
     @NotNull(message = "Stock quantity is required")
     private Integer stockQuantity;
     
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
