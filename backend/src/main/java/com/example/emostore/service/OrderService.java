@@ -48,6 +48,16 @@ public class OrderService {
             Product product = productRepository.findById(itemRequest.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + itemRequest.getProductId()));
 
+            // Task 3: Add stock quantity validation
+            if (product.getStockQuantity() < itemRequest.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName() + 
+                                         ". Available: " + product.getStockQuantity());
+            }
+
+            // Task 3: Deduct stock quantity
+            product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());
+            productRepository.save(product);
+
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .product(product)
@@ -93,3 +103,4 @@ public class OrderService {
         return orderRepository.save(order);
     }
 }
+

@@ -8,6 +8,8 @@ import com.example.emostore.repository.CategoryRepository;
 import com.example.emostore.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +23,10 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public List<ProductDTO> getAllProducts() {
-        log.info("Fetching all products");
-        return productRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        log.info("Fetching products with pagination: {}", pageable);
+        return productRepository.findAll(pageable)
+                .map(this::convertToDTO);
     }
 
     public ProductDTO getProductById(Long id) {
@@ -107,3 +108,4 @@ public class ProductService {
                 .build();
     }
 }
+

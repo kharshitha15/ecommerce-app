@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
@@ -12,6 +12,21 @@ import ComingSoon from './pages/ComingSoon';
 import Account from './pages/Account';
 import CustomerService from './pages/CustomerService';
 import Registry from './pages/Registry';
+import { useAuth } from './hooks/useAuth';
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (!user || user.role !== 'ADMIN') {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -31,7 +46,14 @@ function App() {
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Route */}
+            <Route 
+              path="/admin/*" 
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              } 
+            />
           </Routes>
         </main>
         <footer className="bg-slate-900 text-white p-8 mt-12">
@@ -46,3 +68,4 @@ function App() {
 }
 
 export default App;
+

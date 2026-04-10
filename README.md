@@ -1,145 +1,119 @@
-# Emostore - Professional E-commerce Backend
+# EmoStore - Premium E-Commerce Platform
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-17-orange)](https://www.oracle.com/java/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+EmoStore is a professional-grade, full-stack e-commerce application built with modern technologies. It features a robust Spring Boot backend, a sleek React frontend, and secure payment integration with Razorpay.
 
-Emostore is a robust, production-ready e-commerce backend platform built with Java Spring Boot. It follows Clean Architecture principles and implements state-of-the-art security practices to deliver a scalable and secure shopping experience.
+## 🚀 Tech Stack
 
----
+### Backend
+- **Spring Boot 3.2**: Core framework
+- **Spring Security & JWT**: Authentication and Authorization
+- **Hibernate / JPA**: ORM and Database Management
+- **MySQL**: Production Database
+- **H2**: Local Development Database
+- **Razorpay SDK**: Payment Gateway Integration
+- **Lombok**: Boilerplate code reduction
+- **Jakarta Validation**: Data integrity and Bean validation
 
-## ✨ Features
-
-### 🔐 Authentication & Security
-- **JWT Authentication**: Secure stateless authentication using JSON Web Tokens.
-- **RBAC (Role-Based Access Control)**: Fine-grained permissions for Admin and User roles.
-- **Spring Security**: Modern filter-chain-based security configuration.
-
-### 📦 Product Management
-- **Full CRUD**: Admin endpoints for product creation, updates, and deletion.
-- **Image Uploads**: Integrated local storage for product images with UUID-based unique naming.
-- **Public Catalog**: Optimized endpoints for product discovery and search.
-
-### 🛒 Cart & Order Modules
-- **Persistent Shopping Cart**: User-specific cart management persisted in the database.
-- **Secure Checkout**: Streamlined order placement with support for multiple payment methods.
-- **Razorpay Integration**: Built-in support for secure online payments.
-
-### 🛠️ Professional Standards
-- **Global Exception Handling**: Centralized error management with specialized `@ControllerAdvice` and custom `ApiResponse` DTO.
-- **Data Transfer Objects (DTOs)**: Complete isolation of database entities from public API responses.
-- **Input Validation**: Mandatory request body validation using Jakarta `@Valid` at the controller layer.
-- **Clean Architecture**: Strictly enforced package layering: `controller`, `service`, `repository`, `model`, `dto`, `security`, `exception`.
+### Frontend
+- **React 19**: Modern UI library
+- **Vite**: Ultra-fast build tool
+- **Tailwind CSS**: Utility-first styling
+- **React Router Dom**: Client-side routing
+- **Axios**: API communication
+- **Lucide React**: Premium iconography
 
 ---
 
-## 🛠️ Tech Stack
-- **Backend**: Java 17, Spring Boot 3.x
-- **Security**: Spring Security, JJWT (JWT)
-- **Database**: MySQL (Primary), H2 (Local Demo)
-- **Data Access**: Spring Data JPA / Hibernate
-- **Deployment**: AWS (EC2 + RDS) ready
+## 🏗️ Architecture Overview
+
+The project follows a standard N-tier architecture:
+- **Presentation Layer**: React.js SPA providing a responsive user experience.
+- **Controller Layer**: RESTful APIs exposing backend functionality.
+- **Service Layer**: Core business logic, including order processing and stock management.
+- **Repository Layer**: Data access using Spring Data JPA.
+- **Database Layer**: Persistent storage via MySQL (Prod) or H2 (Dev).
 
 ---
 
-## 🚀 Getting Started
+## 📋 Prerequisites
 
-### Prerequisites
-- JDK 17+
-- Maven 3.8+
-- MySQL Server
-
-### Database Configuration
-Update `src/main/resources/application.properties` with your MySQL credentials:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/emostoredb
-spring.datasource.username=root
-spring.datasource.password=password
-spring.jpa.hibernate.ddl-auto=update
-```
-
-### Running the Application
-1.  Navigate to the backend directory:
-    ```bash
-    cd backend
-    ```
-2.  Install dependencies and run:
-    ```bash
-    mvn spring-boot:run
-    ```
+- **Java 17+**
+- **Node.js 18+**
+- **MySQL Server** (for production profile)
+- **Maven 3.8+**
+- **Razorpay Test Keys** (for payment flow)
 
 ---
 
-## 📑 API Documentation
-Interactive documentation is available via Swagger UI:
-- **Swagger URL**: `http://localhost:8081/swagger-ui/index.html`
+## 🛠️ Local Setup Instructions
 
-### Key Endpoints:
-| Method | Endpoint | Description | Role |
-| :--- | :--- | :--- | :--- |
-| POST | `/api/v1/auth/register` | User Registration | Public |
-| POST | `/api/v1/auth/login` | User Login | Public |
-| GET | `/api/v1/products` | View All Products | Public |
-| USER | `/api/v1/user/cart` | Cart Management | USER |
-| ADMIN | `/api/v1/admin/products` | CRUD Products | ADMIN |
+### 1. Backend Setup
+1. Navigate to the `backend` directory.
+2. Update `application-dev.properties` if you need to change H2 settings.
+3. Configure environment variables (see table below).
+4. Run the application:
+   ```bash
+   mvn spring-boot:run -Dspring-boot.run.profiles=dev
+   ```
 
----
-
-## ☁️ Deployment Guide (AWS)
-
-### 1. Database (Amazon RDS)
-- Create a MySQL instance in Amazon RDS.
-- Update `application.properties` with the RDS endpoint, username, and password.
-
-### 2. Computing (Amazon EC2)
-- Launch a Linux EC2 instance.
-- Install Java 17 on the instance:
-    ```bash
-    sudo yum install java-17-amazon-corretto
-    ```
-- Upload the JAR file (generated via `mvn clean package`) to the EC2 instance.
-- Run the JAR:
-    ```bash
-    java -jar emostore-backend.jar
-    ```
-
-### 3. Security Groups
-- Ensure port 8081 (or your custom port) is open in the EC2 security group.
-- Allow the EC2 security group to access the RDS instance on port 3306.
+### 2. Frontend Setup
+1. Navigate to the `frontend` directory.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file and set `VITE_API_BASE_URL=http://localhost:8081/api/v1`.
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## 📸 Project Screenshots
+## 🔑 Environment Variables
 
-> [!TIP]
-> To reproduce these screenshots, use **Postman** or **Insomnia** to interact with the API endpoints and **MySQL Workbench** or **phpMyAdmin** to view the database tables.
-
-### 🔐 User Authentication (JWT)
-The login API securely authenticates users and returns a **JWT (JSON Web Token)** that must be used for subsequent authorized requests.
-![User Login](images/login.png)
-*Caption: JWT token generated after successful login and authentication.*
-
-### 📦 Product Management (CRUD)
-The product API provides endpoints for fetching the public catalog and managing products from the admin panel.
-![Product API](images/products.png)
-*Caption: GET request fetching the categorized product list via ApiResponse DTO.*
-
-### 🛒 Shopping Cart Lifecycle
-Users can persist their shopping cart state across sessions, allowing them to add or remove items before checkout.
-![Cart API](images/cart.png)
-*Caption: Cart state management showing updated subtotals and item quantities.*
-
-### 💳 Order Placement & Processing
-The checkout flow simulates a real-world transaction, integrating with Razorpay for secure payments.
-![Order API](images/order.png)
-*Caption: Response showing a successfully placed order with payment simulation status.*
-
-### 🗄️ Database Schema (MySQL)
-Our database follows professional normalization standards, with clear relationships between Users, Products, Categories, and Orders.
-![Database Tables](images/database.png)
-*Caption: MySQL Workbench view showing verified records in the normalized e-commerce schema.*
+| Variable | Description | Default / Example |
+|----------|-------------|-------------------|
+| `DB_PASSWORD` | MySQL Root Password | `your_mysql_password` |
+| `RAZORPAY_KEY` | Razorpay API Key | `rzp_test_...` |
+| `RAZORPAY_SECRET` | Razorpay API Secret | `...` |
+| `JWT_SECRET` | Secret key for JWT signing | `404E6352...` |
+| `JWT_EXPIRATION` | JWT Expiration (ms) | `86400000` (24h) |
+| `CORS_ALLOWED_ORIGINS` | Allowed CORS origins | `http://localhost:5173` |
 
 ---
 
-## 👤 Author
-Developed as a production-grade e-commerce backend showcase.
+## 🔌 API Endpoints Summary
+
+### Auth
+- `POST /api/v1/auth/register` - User registration
+- `POST /api/v1/auth/login` - User login
+
+### Products
+- `GET /api/v1/products` - List products (Paginated: `?page=0&size=20`)
+- `GET /api/v1/products/{id}` - Get product details
+- `GET /api/v1/products/search?query=...` - Search products
+
+### Orders
+- `POST /api/v1/orders` - Place a new order
+- `GET /api/v1/orders` - Get logged-in user's orders
+
+### Admin
+- `GET /api/v1/admin/dashboard/stats` - Dashboard statistics
+- `POST /api/v1/admin/products` - Create new product
+- `PUT /api/v1/admin/products/{id}` - Update product
+
+---
+
+## 📸 Screenshots Section
+*(Placeholders for UI demonstration)*
+- [Homepage Mockup]
+- [Product Grid - Premium Dark/Light Modes]
+- [Admin Dashboard - Real-time Stats]
+
+---
+
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
+
+&copy; 2026 EmoStore. All rights reserved.

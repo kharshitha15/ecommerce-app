@@ -4,6 +4,9 @@ import com.example.emostore.dto.ApiResponse;
 import com.example.emostore.dto.ProductDTO;
 import com.example.emostore.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +20,11 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductDTO>>> getAllProducts() {
-        return ResponseEntity.ok(ApiResponse.success("Products fetched successfully", productService.getAllProducts()));
+    public ResponseEntity<ApiResponse<Page<ProductDTO>>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("Products fetched successfully", productService.getAllProducts(pageable)));
     }
 
     @GetMapping("/{id}")
@@ -31,3 +37,4 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.success("Products searched successfully", productService.searchProducts(query)));
     }
 }
+
