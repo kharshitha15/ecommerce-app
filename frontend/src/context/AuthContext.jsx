@@ -31,29 +31,41 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const res = await axios.post('/api/v1/auth/login', { email, password });
-        const { token, firstName, lastName, role, email: userEmail } = res.data;
-        
-        localStorage.setItem('token', token);
-        const userData = { email: userEmail, firstName, lastName, role };
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUser(userData);
-        return res.data;
+        try {
+            const res = await axios.post('/api/v1/auth/login', { email, password });
+            // Backend wraps response in ApiResponse, so data is in res.data.data
+            const { token, firstName, lastName, role, email: userEmail } = res.data.data;
+            
+            localStorage.setItem('token', token);
+            const userData = { email: userEmail, firstName, lastName, role };
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setUser(userData);
+            return res.data;
+        } catch (error) {
+            const message = error.response?.data?.message || "Login failed. Please check your credentials.";
+            throw new Error(message);
+        }
     };
 
     const register = async (firstName, lastName, email, password) => {
-        const res = await axios.post('/api/v1/auth/register', { firstName, lastName, email, password });
-        const { token, firstName: fName, lastName: lName, role, email: uEmail } = res.data;
-        
-        localStorage.setItem('token', token);
-        const userData = { email: uEmail, firstName: fName, lastName: lName, role };
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUser(userData);
-        return res.data;
+        try {
+            const res = await axios.post('/api/v1/auth/register', { firstName, lastName, email, password });
+            // Backend wraps response in ApiResponse, so data is in res.data.data
+            const { token, firstName: fName, lastName: lName, role, email: uEmail } = res.data.data;
+            
+            localStorage.setItem('token', token);
+            const userData = { email: uEmail, firstName: fName, lastName: lName, role };
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setUser(userData);
+            return res.data;
+        } catch (error) {
+            const message = error.response?.data?.message || "Registration failed. Please try again.";
+            throw new Error(message);
+        }
     };
 
     const logout = () => {

@@ -3,6 +3,7 @@ package com.example.emostore.service;
 import com.example.emostore.dto.AuthRequest;
 import com.example.emostore.dto.AuthResponse;
 import com.example.emostore.dto.RegisterRequest;
+import com.example.emostore.exception.EmailAlreadyExistsException;
 import com.example.emostore.model.Role;
 import com.example.emostore.model.User;
 import com.example.emostore.repository.UserRepository;
@@ -28,7 +29,7 @@ public class AuthService {
         log.info("Registering user: {}", request.getEmail());
         
         if (repository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
 
         User user = User.builder()

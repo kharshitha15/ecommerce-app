@@ -2,6 +2,7 @@ package com.example.emostore.service;
 
 import com.example.emostore.dto.OrderItemRequest;
 import com.example.emostore.dto.OrderRequest;
+import com.example.emostore.exception.InsufficientStockException;
 import com.example.emostore.exception.ResourceNotFoundException;
 import com.example.emostore.model.Order;
 import com.example.emostore.model.OrderItem;
@@ -48,13 +49,11 @@ public class OrderService {
             Product product = productRepository.findById(itemRequest.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found: " + itemRequest.getProductId()));
 
-            // Task 3: Add stock quantity validation
             if (product.getStockQuantity() < itemRequest.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName() + 
+                throw new InsufficientStockException("Insufficient stock for product: " + product.getName() + 
                                          ". Available: " + product.getStockQuantity());
             }
 
-            // Task 3: Deduct stock quantity
             product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());
             productRepository.save(product);
 
@@ -103,4 +102,3 @@ public class OrderService {
         return orderRepository.save(order);
     }
 }
-

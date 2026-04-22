@@ -1,26 +1,53 @@
 # EmoStore - Premium E-Commerce Platform
 
+[![Live Demo](https://img.shields.io/badge/demo-live-blueviolet)](https://emostore-production.up.railway.app)
+
 EmoStore is a professional-grade, full-stack e-commerce application built with modern technologies. It features a robust Spring Boot backend, a sleek React frontend, and secure payment integration with Razorpay.
+
+## 🚀 Live Demo
+The application is deployed on Railway. You can access it here:
+**[https://emostore-production.up.railway.app](https://emostore-production.up.railway.app)**
+
+*Note: To deploy your own version on Railway, simply connect your GitHub repo and add the environment variables listed below.*
+
+---
+
+## 📸 Screenshots
+
+![Homepage](./images/products.png)
+*Modern Product Discovery*
+
+![Cart](./images/cart.png)
+*Dynamic Shopping Cart*
+
+![Login](./images/login.png)
+*Secure JWT Authentication*
+
+![Order Tracking](./images/order.png)
+*Real-time Order Status*
+
+![Database Schema](./images/database.png)
+*Optimized MySQL Schema*
+
+---
 
 ## 🚀 Tech Stack
 
 ### Backend
 - **Spring Boot 3.2**: Core framework
 - **Spring Security & JWT**: Authentication and Authorization
+- **Bucket4j**: Rate limiting and Brute-force protection
 - **Hibernate / JPA**: ORM and Database Management
 - **MySQL**: Production Database
-- **H2**: Local Development Database
 - **Razorpay SDK**: Payment Gateway Integration
 - **Lombok**: Boilerplate code reduction
-- **Jakarta Validation**: Data integrity and Bean validation
 
 ### Frontend
 - **React 19**: Modern UI library
 - **Vite**: Ultra-fast build tool
 - **Tailwind CSS**: Utility-first styling
-- **React Router Dom**: Client-side routing
-- **Axios**: API communication
-- **Lucide React**: Premium iconography
+- **Context API**: Global state management (Auth & Cart)
+- **Axios**: API communication with interceptors
 
 ---
 
@@ -35,22 +62,18 @@ The project follows a standard N-tier architecture:
 
 ---
 
-## 📋 Prerequisites
-
-- **Java 17+**
-- **Node.js 18+**
-- **MySQL Server** (for production profile)
-- **Maven 3.8+**
-- **Razorpay Test Keys** (for payment flow)
-
----
-
 ## 🛠️ Local Setup Instructions
 
 ### 1. Backend Setup
 1. Navigate to the `backend` directory.
 2. Update `application-dev.properties` if you need to change H2 settings.
-3. Configure environment variables (see table below).
+3. Configure environment variables:
+   ```bash
+   export DB_PASSWORD=your_password
+   export JWT_SECRET=your_secret_key
+   export RAZORPAY_KEY=your_key
+   export RAZORPAY_SECRET=your_secret
+   ```
 4. Run the application:
    ```bash
    mvn spring-boot:run -Dspring-boot.run.profiles=dev
@@ -62,8 +85,7 @@ The project follows a standard N-tier architecture:
    ```bash
    npm install
    ```
-3. Create a `.env` file and set `VITE_API_BASE_URL=http://localhost:8081/api/v1`.
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm run dev
    ```
@@ -79,37 +101,6 @@ The project follows a standard N-tier architecture:
 | `RAZORPAY_SECRET` | Razorpay API Secret | `...` |
 | `JWT_SECRET` | Secret key for JWT signing | `404E6352...` |
 | `JWT_EXPIRATION` | JWT Expiration (ms) | `86400000` (24h) |
-| `CORS_ALLOWED_ORIGINS` | Allowed CORS origins | `http://localhost:5173` |
-
----
-
-## 🔌 API Endpoints Summary
-
-### Auth
-- `POST /api/v1/auth/register` - User registration
-- `POST /api/v1/auth/login` - User login
-
-### Products
-- `GET /api/v1/products` - List products (Paginated: `?page=0&size=20`)
-- `GET /api/v1/products/{id}` - Get product details
-- `GET /api/v1/products/search?query=...` - Search products
-
-### Orders
-- `POST /api/v1/orders` - Place a new order
-- `GET /api/v1/orders` - Get logged-in user's orders
-
-### Admin
-- `GET /api/v1/admin/dashboard/stats` - Dashboard statistics
-- `POST /api/v1/admin/products` - Create new product
-- `PUT /api/v1/admin/products/{id}` - Update product
-
----
-
-## 📸 Screenshots Section
-*(Placeholders for UI demonstration)*
-- [Homepage Mockup]
-- [Product Grid - Premium Dark/Light Modes]
-- [Admin Dashboard - Real-time Stats]
 
 ---
 

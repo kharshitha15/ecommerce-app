@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,15 @@ public class CartService {
         cartItemRepository.delete(item);
 
         return convertToDTO(cartRepository.save(cart));
+    }
+
+    @Transactional
+    public void clearCart(User user) {
+        log.info("Clearing cart for user {}", user.getEmail());
+        Cart cart = getOrCreateCart(user);
+        cartItemRepository.deleteAll(cart.getItems());
+        cart.getItems().clear();
+        cartRepository.save(cart);
     }
 
     private Cart getOrCreateCart(User user) {
