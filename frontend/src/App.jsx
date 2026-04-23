@@ -12,7 +12,7 @@ import ComingSoon from './pages/ComingSoon';
 import Account from './pages/Account';
 import CustomerService from './pages/CustomerService';
 import Registry from './pages/Registry';
-import { useAuth } from './hooks/useAuth';
+import { useAuth } from './context/AuthContext';
 
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -68,4 +68,3 @@ function App() {
 }
 
 export default App;
-
