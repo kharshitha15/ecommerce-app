@@ -16,7 +16,9 @@ const ProductDetails = () => {
         const fetchProduct = async () => {
             try {
                 const res = await axios.get(`/api/v1/products/${id}`);
-                setProduct(res.data);
+                // Extract data from ApiResponse wrapper
+                const data = res.data.success ? res.data.data : res.data;
+                setProduct(data);
             } catch (err) {
                 console.error("Failed to fetch product", err);
             }
@@ -49,7 +51,7 @@ const ProductDetails = () => {
                     />
                 </div>
                 <div className="flex flex-col">
-                    <p className="text-amber-600 font-semibold uppercase tracking-wider mb-2">{product.category}</p>
+                    <p className="text-amber-600 font-semibold uppercase tracking-wider mb-2">{product.categoryName || product.category}</p>
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
                     
                     <div className="mb-6 flex items-baseline gap-4">

@@ -36,7 +36,8 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const res = await axios.get('/api/v1/admin/dashboard/stats');
-            setStats(res.data);
+            const data = res.data.success ? res.data.data : res.data;
+            setStats(data);
         } catch (err) { console.error(err); }
     };
 
@@ -44,7 +45,9 @@ const AdminDashboard = () => {
         setLoading(true);
         try {
             const res = await axios.get('/api/v1/products');
-            setProducts(res.data);
+            const data = res.data.success ? res.data.data : res.data;
+            const content = data.content !== undefined ? data.content : data;
+            setProducts(Array.isArray(content) ? content : []);
         } catch (err) { console.error(err); }
         setLoading(false);
     };
@@ -53,7 +56,8 @@ const AdminDashboard = () => {
         setLoading(true);
         try {
             const res = await axios.get('/api/v1/admin/orders');
-            setOrders(res.data);
+            const data = res.data.success ? res.data.data : res.data;
+            setOrders(Array.isArray(data) ? data : (data.content || []));
         } catch (err) { console.error(err); }
         setLoading(false);
     };
@@ -62,7 +66,8 @@ const AdminDashboard = () => {
         setLoading(true);
         try {
             const res = await axios.get('/api/v1/admin/users');
-            setUsers(res.data);
+            const data = res.data.success ? res.data.data : res.data;
+            setUsers(Array.isArray(data) ? data : (data.content || []));
         } catch (err) { console.error(err); }
         setLoading(false);
     };
@@ -189,7 +194,7 @@ const AdminDashboard = () => {
                                     <input type="number" placeholder="Price" required className="input-field" value={formProduct.price} onChange={e => setFormProduct({...formProduct, price: e.target.value})} />
                                     <input type="number" placeholder="Stock" required className="input-field" value={formProduct.stockQuantity} onChange={e => setFormProduct({...formProduct, stockQuantity: e.target.value})} />
                                 </div>
-                                <input type="text" placeholder="Category" required className="input-field" value={formProduct.category} onChange={e => setFormProduct({...formProduct, category: e.target.value})} />
+                                <input type="text" placeholder="Category" required className="input-field" value={formProduct.categoryName || formProduct.category} onChange={e => setFormProduct({...formProduct, category: e.target.value})} />
                                 <div className="pt-2">
                                     <label className="text-xs font-bold text-gray-400 block mb-2 uppercase">Image Upload</label>
                                     <input type="file" onChange={e => setImageFile(e.target.files[0])} className="text-sm w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 cursor-pointer" />
@@ -219,7 +224,7 @@ const AdminDashboard = () => {
                                                     <span className="font-semibold text-sm line-clamp-1">{p.name}</span>
                                                 </div>
                                             </td>
-                                            <td className="p-4 font-mono text-sm">${p.price.toFixed(2)}</td>
+                                            <td className="p-4 font-mono text-sm">${(p.price || 0).toFixed(2)}</td>
                                             <td className="p-4"><span className={`px-2 py-1 rounded text-xs font-bold ${p.stockQuantity < 10 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{p.stockQuantity}</span></td>
                                             <td className="p-4 flex gap-2">
                                                 <button onClick={() => { setIsEditing(true); setFormProduct(p); }} className="p-2 hover:bg-blue-50 text-blue-500 rounded-lg transition-colors"><FiEdit/></button>
@@ -251,7 +256,7 @@ const AdminDashboard = () => {
                                     <tr key={o.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                                         <td className="p-4 font-mono text-sm font-bold text-indigo-600">#{o.id}</td>
                                         <td className="p-4 text-sm">{o.user?.email}</td>
-                                        <td className="p-4 text-sm font-bold">${o.totalAmount.toFixed(2)}</td>
+                                        <td className="p-4 text-sm font-bold">${(o.totalAmount || 0).toFixed(2)}</td>
                                         <td className="p-4">
                                             <select 
                                                 value={o.status} 

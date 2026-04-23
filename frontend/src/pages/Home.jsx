@@ -18,9 +18,13 @@ const Home = () => {
                     url = `/api/v1/products/search?query=${searchQuery}`;
                 }
                 const res = await axios.get(url);
-                setProducts(res.data);
+                // Handle standard ApiResponse wrapper and pagination
+                const data = res.data.success ? res.data.data : res.data;
+                const content = data.content !== undefined ? data.content : data;
+                setProducts(Array.isArray(content) ? content : []);
             } catch (err) {
                 console.error("Failed to fetch products", err);
+                setProducts([]);
             }
             setLoading(false);
         };
