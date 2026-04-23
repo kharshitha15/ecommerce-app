@@ -20,7 +20,8 @@ const Register = () => {
             await register(firstName, lastName, email, password);
             navigate('/');
         } catch (err) {
-            setError('Registration failed. Please try again.');
+            // Show the actual error message from the backend if available
+            setError(err.message || 'Registration failed. Please try again.');
         }
         setLoading(false);
     };
