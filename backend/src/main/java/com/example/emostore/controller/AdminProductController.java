@@ -33,7 +33,7 @@ public class AdminProductController {
                 .description(description)
                 .price(price)
                 .stockQuantity(stockQuantity)
-                .category(category)
+                .categoryName(category)
                 .build();
 
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -59,7 +59,7 @@ public class AdminProductController {
                 .description(description)
                 .price(price)
                 .stockQuantity(stockQuantity)
-                .category(category)
+                .categoryName(category)
                 .build();
 
         if (imageFile != null && !imageFile.isEmpty()) {
