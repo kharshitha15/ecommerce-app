@@ -4,6 +4,7 @@ import com.example.emostore.dto.OrderRequest;
 import com.example.emostore.model.Order;
 import com.example.emostore.service.OrderService;
 import com.example.emostore.service.PaymentService;
+import com.razorpay.RazorpayException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> placeOrder(@Valid @RequestBody OrderRequest orderRequest, Authentication authentication) {
+    public ResponseEntity<?> placeOrder(@Valid @RequestBody OrderRequest orderRequest, Authentication authentication) throws RazorpayException {
         String email = authentication.getName();
         log.info("Processing order for user: {}, method: {}", email, orderRequest.getPaymentMethod());
         
@@ -58,4 +59,3 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getUserOrders(email));
     }
 }
-
