@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,6 @@ public class AdminSeeder implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        // Create Admin if not exists
         if (!userRepository.existsByEmail("admin@emostore.com")) {
             User admin = User.builder()
                     .firstName("Admin")
@@ -50,7 +50,6 @@ public class AdminSeeder implements CommandLineRunner {
             log.info("Admin user created: admin@emostore.com / admin123");
         }
 
-        // Create User if not exists
         if (!userRepository.existsByEmail("user@emostore.com")) {
             User user = User.builder()
                     .firstName("Default")
@@ -79,14 +78,12 @@ public class AdminSeeder implements CommandLineRunner {
         if (productRepository.count() == 0) {
             Category electronics = categoryRepository.findByName("Electronics").orElse(null);
             Category accessories = categoryRepository.findByName("Accessories").orElse(null);
-            Category home = categoryRepository.findByName("Home").orElse(null);
-            Category health = categoryRepository.findByName("Health").orElse(null);
 
             List<Product> products = List.of(
-                Product.builder().name("Wireless Headphones").description("Noise cancelling").price(299.99).stockQuantity(50).imageUrl("https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500").category(electronics).build(),
-                Product.builder().name("Smart Watch").description("Fitness tracking").price(399.00).stockQuantity(120).imageUrl("https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500").category(electronics).build(),
-                Product.builder().name("Leather Backpack").description("Premium quality").price(149.50).stockQuantity(30).imageUrl("https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500").category(accessories).build(),
-                Product.builder().name("Mechanical Keyboard").description("RGB Lighting").price(119.99).stockQuantity(85).imageUrl("https://images.unsplash.com/photo-1595225476474-87563907a212?w=500").category(accessories).build()
+                Product.builder().name("Wireless Headphones").description("Noise cancelling").price(BigDecimal.valueOf(299.99)).stockQuantity(50).imageUrl("https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500").category(electronics).build(),
+                Product.builder().name("Smart Watch").description("Fitness tracking").price(BigDecimal.valueOf(399.00)).stockQuantity(120).imageUrl("https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500").category(electronics).build(),
+                Product.builder().name("Leather Backpack").description("Premium quality").price(BigDecimal.valueOf(149.50)).stockQuantity(30).imageUrl("https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500").category(accessories).build(),
+                Product.builder().name("Mechanical Keyboard").description("RGB Lighting").price(BigDecimal.valueOf(119.99)).stockQuantity(85).imageUrl("https://images.unsplash.com/photo-1595225476474-87563907a212?w=500").category(accessories).build()
             );
             productRepository.saveAll(products);
             log.info("Products seeded.");
