@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { FiPackage, FiTruck, FiCheck, FiClock } from 'react-icons/fi';
@@ -13,10 +13,7 @@ const Orders = () => {
         if (!user) return;
         const fetchOrders = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('/api/v1/orders', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await axios.get('/api/v1/orders');
                 setOrders(res.data.sort((a,b) => new Date(b.orderDate) - new Date(a.orderDate)));
             } catch (err) {
                 console.error("Failed to fetch orders", err);

@@ -93,6 +93,12 @@
 			<artifactId>bucket4j-core</artifactId>
 			<version>${bucket4j.version}</version>
 		</dependency>
+		<!-- Cloudinary for Image Uploads -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.36.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

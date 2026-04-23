@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
 import { FiCheckCircle } from 'react-icons/fi';
 
 const Checkout = () => {
@@ -33,16 +33,13 @@ const Checkout = () => {
     const placeOrder = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
             const items = cart.map(item => ({
                 productId: item.product.id,
                 quantity: item.quantity
             }));
             
             // Create order first
-            const res = await axios.post('/api/v1/orders', { items, paymentMethod }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await axios.post('/api/v1/orders', { items, paymentMethod });
 
             if (paymentMethod === 'COD') {
                 clearCart();
@@ -66,7 +63,7 @@ const Checkout = () => {
                             razorpayOrderId: response.razorpay_order_id,
                             razorpayPaymentId: response.razorpay_payment_id,
                             razorpaySignature: response.razorpay_signature
-                        }, { headers: { Authorization: `Bearer ${token}` } });
+                        });
                         if (verifyRes.data.status === 'success') {
                             clearCart();
                             setSuccess(true);

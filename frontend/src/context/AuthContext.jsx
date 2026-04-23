@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
                 } else {
                     const userData = JSON.parse(savedUser);
                     setUser(userData);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 }
             } catch (err) {
                 logout();
@@ -40,7 +39,6 @@ export const AuthProvider = ({ children }) => {
             const userData = { email: userEmail, firstName, lastName, role };
             localStorage.setItem('user', JSON.stringify(userData));
             
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             setUser(userData);
             return res.data;
         } catch (error) {
@@ -59,7 +57,6 @@ export const AuthProvider = ({ children }) => {
             const userData = { email: uEmail, firstName: fName, lastName: lName, role };
             localStorage.setItem('user', JSON.stringify(userData));
             
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             setUser(userData);
             return res.data;
         } catch (error) {
@@ -71,7 +68,6 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };
 

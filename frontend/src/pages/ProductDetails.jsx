@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
 import { useCart } from '../context/CartContext';
 import { FiCheck, FiTruck, FiShield, FiArrowLeft } from 'react-icons/fi';
 

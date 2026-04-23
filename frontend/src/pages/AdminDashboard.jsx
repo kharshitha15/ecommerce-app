@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { FiBox, FiShoppingBag, FiUsers, FiPieChart, FiPlus, FiTrash2, FiEdit, FiCheckCircle, FiXCircle } from 'react-icons/fi';
@@ -33,13 +33,9 @@ const AdminDashboard = () => {
         if (view === 'users') fetchUsers();
     }, [user, view]);
 
-    const getHeaders = () => ({
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-
     const fetchStats = async () => {
         try {
-            const res = await axios.get('/api/v1/admin/dashboard/stats', getHeaders());
+            const res = await axios.get('/api/v1/admin/dashboard/stats');
             setStats(res.data);
         } catch (err) { console.error(err); }
     };
@@ -56,7 +52,7 @@ const AdminDashboard = () => {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('/api/v1/admin/orders', getHeaders());
+            const res = await axios.get('/api/v1/admin/orders');
             setOrders(res.data);
         } catch (err) { console.error(err); }
         setLoading(false);
@@ -65,7 +61,7 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('/api/v1/admin/users', getHeaders());
+            const res = await axios.get('/api/v1/admin/users');
             setUsers(res.data);
         } catch (err) { console.error(err); }
         setLoading(false);
@@ -84,7 +80,6 @@ const AdminDashboard = () => {
 
             const config = {
                 headers: { 
-                    ...getHeaders().headers,
                     'Content-Type': 'multipart/form-data' 
                 }
             };
@@ -114,7 +109,7 @@ const AdminDashboard = () => {
     const deleteProduct = async (id) => {
         if (!window.confirm("Delete this product?")) return;
         try {
-            await axios.delete(`/api/v1/admin/products/${id}`, getHeaders());
+            await axios.delete(`/api/v1/admin/products/${id}`);
             fetchProducts();
         } catch (err) { alert("Delete failed"); }
     };
@@ -122,7 +117,7 @@ const AdminDashboard = () => {
     // Order Handlers
     const updateOrderStatus = async (id, status) => {
         try {
-            await axios.put(`/api/v1/admin/orders/${id}/status?status=${status}`, {}, getHeaders());
+            await axios.put(`/api/v1/admin/orders/${id}/status?status=${status}`, {});
             fetchOrders();
         } catch (err) { alert("Status update failed"); }
     };
@@ -130,7 +125,7 @@ const AdminDashboard = () => {
     // User Handlers
     const toggleUserBlock = async (id, currentStatus) => {
         try {
-            await axios.put(`/api/v1/admin/users/${id}/block?enabled=${!currentStatus}`, {}, getHeaders());
+            await axios.put(`/api/v1/admin/users/${id}/block?enabled=${!currentStatus}`, {});
             fetchUsers();
         } catch (err) { alert("Action failed"); }
     };
@@ -138,7 +133,7 @@ const AdminDashboard = () => {
     const deleteUser = async (id) => {
         if (!window.confirm("Delete this user?")) return;
         try {
-            await axios.delete(`/api/v1/admin/users/${id}`, getHeaders());
+            await axios.delete(`/api/v1/admin/users/${id}`);
             fetchUsers();
         } catch (err) { alert("Delete failed"); }
     };
