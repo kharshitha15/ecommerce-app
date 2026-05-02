@@ -10,6 +10,9 @@ import java.util.Optional;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByToken(String token);
     
+    java.util.List<RefreshToken> findByUserAndRevoked(User user, boolean revoked);
+    
     @Modifying
-    int deleteByUser(User user);
+    @org.springframework.data.jpa.repository.Query("UPDATE RefreshToken t SET t.revoked = true WHERE t.user = :user")
+    int revokeAllByUser(@org.springframework.data.repository.query.Param("user") User user);
 }

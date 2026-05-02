@@ -1,6 +1,8 @@
 package com.example.emostore.service;
 
+import com.example.emostore.exception.ResourceNotFoundException;
 import com.example.emostore.model.RefreshToken;
+import com.example.emostore.model.User;
 import com.example.emostore.repository.RefreshTokenRepository;
 import com.example.emostore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,21 +30,29 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        // Rotation: Revoke old tokens instead of deleting them to prevent lockout
+        refreshTokenRepository.revokeAllByUser(user);
+
         RefreshToken refreshToken = RefreshToken.builder()
-                .user(userRepository.findById(userId).get())
+                .user(user)
                 .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
                 .token(UUID.randomUUID().toString())
+                .revoked(false)
                 .build();
-
-        // Rotation: Delete old tokens for this user
-        refreshTokenRepository.deleteByUser(refreshToken.getUser());
         
         return refreshTokenRepository.save(refreshToken);
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {
+        if (token.isRevoked()) {
+            throw new RuntimeException("Refresh token was revoked.");
+        }
         if (token.getExpiryDate().isBefore(Instant.now())) {
-            refreshTokenRepository.delete(token);
+            token.setRevoked(true);
+            refreshTokenRepository.save(token);
             throw new RuntimeException("Refresh token was expired. Please make a new signin request");
         }
         return token;
@@ -50,6 +60,8 @@ public class RefreshTokenService {
 
     @Transactional
     public int deleteByUserId(Long userId) {
-        return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        return refreshTokenRepository.revokeAllByUser(user);
     }
 }

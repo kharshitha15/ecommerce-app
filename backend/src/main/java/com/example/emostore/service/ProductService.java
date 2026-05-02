@@ -40,6 +40,12 @@ public class ProductService {
         return convertToDTO(product);
     }
 
+    /**
+     * allEntries=true is needed because the 'products' cache uses pagination as part of the key.
+     * When a new product is added, we don't know which page it will appear on, so we must 
+     * invalidate the entire collection cache to ensure consistency.
+     */
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO createProduct(ProductDTO productDTO) {
         log.info("Creating new product: {}", productDTO.getName());
         Product product = convertToEntity(productDTO);
