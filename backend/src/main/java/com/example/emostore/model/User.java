@@ -21,6 +21,7 @@ import java.util.List;
 @Table(name = "users")
 
 
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
