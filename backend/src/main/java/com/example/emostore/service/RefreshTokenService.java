@@ -33,8 +33,8 @@ public class RefreshTokenService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // Rotation: Revoke old tokens instead of deleting them to prevent lockout
-        refreshTokenRepository.revokeAllByUser(user);
+        // Delete old tokens to satisfy unique constraint on user_id
+        refreshTokenRepository.deleteByUser(user);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
@@ -62,6 +62,7 @@ public class RefreshTokenService {
     public int deleteByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-        return refreshTokenRepository.revokeAllByUser(user);
+        refreshTokenRepository.deleteByUser(user);
+        return 1; // Simple return as deleteByUser is void now
     }
 }
