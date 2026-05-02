@@ -14,12 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import java.util.Collection;
-import java.util.List;
-
 @Entity
 @Table(name = "users")
 @Data

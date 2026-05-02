@@ -4,6 +4,7 @@ import com.example.emostore.dto.AuthRequest;
 import com.example.emostore.dto.AuthResponse;
 import com.example.emostore.dto.RegisterRequest;
 import com.example.emostore.exception.EmailAlreadyExistsException;
+import com.example.emostore.model.RefreshToken;
 import com.example.emostore.model.Role;
 import com.example.emostore.model.User;
 import com.example.emostore.repository.UserRepository;
@@ -44,7 +45,7 @@ public class AuthService {
 
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        com.example.emostore.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         return AuthResponse.builder()
                 .token(jwtToken)
@@ -70,7 +71,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         String jwtToken = jwtService.generateToken(user);
-        com.example.emostore.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         return AuthResponse.builder()
                 .token(jwtToken)
@@ -87,10 +88,10 @@ public class AuthService {
         
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
-                .map(com.example.emostore.model.RefreshToken::getUser)
+                .map(RefreshToken::getUser)
                 .map(user -> {
                     String token = jwtService.generateToken(user);
-                    com.example.emostore.model.RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
                     return AuthResponse.builder()
                             .token(token)
                             .refreshToken(newRefreshToken.getToken())
