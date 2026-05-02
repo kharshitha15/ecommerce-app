@@ -1,6 +1,6 @@
 package com.example.emostore.config;
 
-import com.github.ben-manes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
