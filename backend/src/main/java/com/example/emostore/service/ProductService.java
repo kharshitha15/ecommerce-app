@@ -8,6 +8,8 @@ import com.example.emostore.repository.CategoryRepository;
 import com.example.emostore.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,12 +25,14 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
+    @Cacheable(value = "products", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         log.info("Fetching products with pagination: {}", pageable);
         return productRepository.findAll(pageable)
                 .map(this::convertToDTO);
     }
 
+    @Cacheable(value = "product", key = "#id")
     public ProductDTO getProductById(Long id) {
         log.debug("Fetching product by id: {}", id);
         Product product = productRepository.findById(id)
@@ -50,6 +54,7 @@ public class ProductService {
         return convertToDTO(savedProduct);
     }
 
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
         log.info("Updating product with id: {}", id);
         Product existingProduct = productRepository.findById(id)
@@ -71,6 +76,7 @@ public class ProductService {
         return convertToDTO(updatedProduct);
     }
 
+    @CacheEvict(value = {"products", "product"}, allEntries = true)
     public void deleteProduct(Long id) {
         log.warn("Deleting product with id: {}", id);
         if (!productRepository.existsById(id)) {

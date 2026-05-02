@@ -42,4 +42,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                 .body(ApiResponse.error("Too many login attempts. Please try again in a minute."));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshToken(@Valid @RequestBody com.example.emostore.dto.TokenRefreshRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Token refreshed successfully", service.refreshToken(request)));
+    }
 }

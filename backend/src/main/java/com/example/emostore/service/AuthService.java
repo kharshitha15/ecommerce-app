@@ -24,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthResponse register(RegisterRequest request) {
         log.info("Registering user: {}", request.getEmail());
@@ -43,9 +44,11 @@ public class AuthService {
 
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);
+        com.example.emostore.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -67,13 +70,36 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         String jwtToken = jwtService.generateToken(user);
+        com.example.emostore.model.RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken.getToken())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .role(user.getRole().name())
                 .build();
+    }
+    
+    public AuthResponse refreshToken(com.example.emostore.dto.TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+        
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(com.example.emostore.model.RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtService.generateToken(user);
+                    com.example.emostore.model.RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user.getId());
+                    return AuthResponse.builder()
+                            .token(token)
+                            .refreshToken(newRefreshToken.getToken())
+                            .email(user.getEmail())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .role(user.getRole().name())
+                            .build();
+                })
+                .orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
     }
 }

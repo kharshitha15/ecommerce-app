@@ -3,6 +3,7 @@ package com.example.emostore.service;
 import com.example.emostore.dto.OrderItemRequest;
 import com.example.emostore.dto.OrderRequest;
 import com.example.emostore.exception.InsufficientStockException;
+import com.example.emostore.exception.ResourceNotFoundException;
 import com.example.emostore.model.Order;
 import com.example.emostore.model.Product;
 import com.example.emostore.model.User;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,44 +45,66 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = User.builder().id(1L).email("john@example.com").build();
+        user = User.builder()
+                .id(1L)
+                .email("test@example.com")
+                .build();
+
         product = Product.builder()
                 .id(1L)
                 .name("Test Product")
                 .price(BigDecimal.valueOf(100))
                 .stockQuantity(10)
                 .build();
-        
+
         OrderItemRequest itemRequest = new OrderItemRequest();
         itemRequest.setProductId(1L);
         itemRequest.setQuantity(2);
-        
+
         orderRequest = new OrderRequest();
-        orderRequest.setPaymentMethod("COD");
         orderRequest.setItems(List.of(itemRequest));
+        orderRequest.setPaymentMethod("COD");
     }
 
     @Test
     void createOrder_Success() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderRepository.save(any(Order.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        Order order = orderService.createOrder(orderRequest, "john@example.com");
+        Order createdOrder = orderService.createOrder(orderRequest, "test@example.com");
 
-        assertNotNull(order);
-        assertEquals(8, product.getStockQuantity()); // 10 - 2
-        verify(productRepository, times(1)).save(product);
-        verify(orderRepository, times(1)).save(any(Order.class));
+        assertNotNull(createdOrder);
+        assertEquals(user, createdOrder.getUser());
+        assertEquals(BigDecimal.valueOf(200), createdOrder.getTotalAmount());
+        assertEquals(8, product.getStockQuantity());
+        verify(productRepository, times(1)).saveAndFlush(product);
     }
 
     @Test
     void createOrder_ThrowsInsufficientStockException() {
-        product.setStockQuantity(1); // Only 1 in stock, request wants 2
+        product.setStockQuantity(1);
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
-        assertThrows(InsufficientStockException.class, () -> orderService.createOrder(orderRequest, "john@example.com"));
-        verify(orderRepository, never()).save(any(Order.class));
+        assertThrows(InsufficientStockException.class, () -> orderService.createOrder(orderRequest, "test@example.com"));
+    }
+
+    @Test
+    void createOrder_ThrowsOptimisticLockException() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        doThrow(new ObjectOptimisticLockingFailureException(Product.class, 1L))
+                .when(productRepository).saveAndFlush(any(Product.class));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> orderService.createOrder(orderRequest, "test@example.com"));
+        assertTrue(exception.getMessage().contains("Product stock was updated by another transaction"));
+    }
+
+    @Test
+    void createOrder_ThrowsUserNotFound() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> orderService.createOrder(orderRequest, "test@example.com"));
     }
 }

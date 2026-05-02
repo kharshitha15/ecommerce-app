@@ -55,7 +55,12 @@ public class OrderService {
             }
 
             product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());
-            productRepository.save(product);
+            try {
+                productRepository.saveAndFlush(product);
+            } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+                log.error("Conflict detected while updating stock for product: {}", product.getName());
+                throw new RuntimeException("Product stock was updated by another transaction. Please try again.");
+            }
 
             OrderItem orderItem = OrderItem.builder()
                     .order(order)

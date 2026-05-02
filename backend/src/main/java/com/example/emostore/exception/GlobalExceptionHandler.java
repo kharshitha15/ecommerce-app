@@ -39,6 +39,11 @@ public class GlobalExceptionHandler {
         });
         return new ResponseEntity<>(ApiResponse.success("Validation failed", errors), HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(org.springframework.orm.ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiResponse<Object>> handleOptimisticLockingFailureException(org.springframework.orm.ObjectOptimisticLockingFailureException ex) {
+        return new ResponseEntity<>(ApiResponse.error("The item was updated by another user. Please try again."), HttpStatus.CONFLICT);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception ex) {
