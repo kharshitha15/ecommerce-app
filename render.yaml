@@ -1,3 +1,9 @@
+databases:
+  - name: emostore-db
+    plan: free
+    databaseName: emostoredb
+    user: emostoreuser
+
 services:
   - type: web
     name: emostore-backend
@@ -10,16 +16,18 @@ services:
         value: 8081
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: MYSQLHOST
-        sync: false
-      - key: MYSQLPORT
-        sync: false
-      - key: MYSQLDATABASE
-        sync: false
-      - key: MYSQLUSER
-        sync: false
-      - key: MYSQLPASSWORD
-        sync: false
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: emostore-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: emostore-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: emostore-db
+          property: password
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION
