@@ -16,23 +16,15 @@ services:
         value: 8081
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DB_HOST
+      - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: emostore-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: emostore-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: emostore-db
-          property: database
-      - key: SPRING_DATASOURCE_USERNAME
+          property: connectionString
+      - key: DB_USERNAME
         fromDatabase:
           name: emostore-db
           property: user
-      - key: SPRING_DATASOURCE_PASSWORD
+      - key: DB_PASSWORD
         fromDatabase:
           name: emostore-db
           property: password
