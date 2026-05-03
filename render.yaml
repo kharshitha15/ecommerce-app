@@ -7,7 +7,7 @@ databases:
 services:
   - type: web
     name: emostore-backend
-    env: docker
+    runtime: docker
     dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     plan: free
@@ -58,8 +58,7 @@ services:
 
   - type: static
     name: emostore-frontend
-    env: static
-    rootDirectory: frontend
+    rootDir: frontend
     buildCommand: npm install && npm run build
     publishDir: dist
     envVars:
