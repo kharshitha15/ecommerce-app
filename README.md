@@ -7,14 +7,14 @@ EmoStore is a professional-grade, full-stack e-commerce application built with m
 
 ## 🚀 Live Demo
 The application is fully deployed and ready for testing:
-- **Frontend (Vercel):** [https://ecommerce-app-peach.vercel.app](https://ecommerce-app-peach.vercel.app)
-- **Backend API (Railway):** [https://ecommerce-app-production-4e24.up.railway.app](https://ecommerce-app-production-4e24.up.railway.app)
+- **Frontend (Render):** [https://emostore-frontend.onrender.com](https://emostore-frontend.onrender.com)
+- **Backend API (Render):** [https://emostore-backend.onrender.com](https://emostore-backend.onrender.com)
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend (Railway)
+### Backend (Render)
 - **Spring Boot 3.2**: Core framework
 - **Spring Security & JWT**: Authentication and Authorization
 - **Bucket4j**: Rate limiting and Brute-force protection
@@ -23,7 +23,7 @@ The application is fully deployed and ready for testing:
 - **Cloudinary**: Cloud-based Image Management
 - **Razorpay SDK**: Payment Gateway Integration
 
-### Frontend (Vercel)
+### Frontend (Render)
 - **React 19**: Modern UI library
 - **Vite**: Ultra-fast build tool
 - **Tailwind CSS**: Utility-first styling
