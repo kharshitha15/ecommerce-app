@@ -51,7 +51,7 @@ services:
       - key: CLOUDINARY_API_SECRET
         sync: false
       - key: CORS_ALLOWED_ORIGINS
-        value: https://emostore-frontend.onrender.com
+        value: https://ecommerce-app-peach.vercel.app
 
   - type: web
     name: emostore-frontend
