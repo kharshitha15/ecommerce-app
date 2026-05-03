@@ -1,0 +1,73 @@
+databases:
+- name: emostore-db
+  plan: free
+  databaseName: emostoredb
+  user: emostoreuser
+services:
+- type: web
+  name: emostore-backend
+  env: docker
+  dockerContext: ./backend
+  dockerfilePath: ./backend/Dockerfile
+  plan: free
+  envVars:
+  - key: PORT
+    value: 8081
+  - key: SPRING_PROFILES_ACTIVE
+    value: prod
+  - key: DB_HOST
+    fromDatabase:
+      name: emostore-db
+      property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: emostore-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: emostore-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: emostore-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: emostore-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: RAZORPAY_KEY
+        sync: false
+      - key: RAZORPAY_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        fromService:
+          type: static
+          name: emostore-frontend
+          property: url
+
+  - type: static
+    name: emostore-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: emostore-backend
+          property: url
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
