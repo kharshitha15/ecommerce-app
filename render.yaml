@@ -1,24 +1,25 @@
 databases:
-- name: emostore-db
-  plan: free
-  databaseName: emostoredb
-  user: emostoreuser
+  - name: emostore-db
+    plan: free
+    databaseName: emostoredb
+    user: emostoreuser
+
 services:
-- type: web
-  name: emostore-backend
-  env: docker
-  dockerContext: ./backend
-  dockerfilePath: ./backend/Dockerfile
-  plan: free
-  envVars:
-  - key: PORT
-    value: 8081
-  - key: SPRING_PROFILES_ACTIVE
-    value: prod
-  - key: DB_HOST
-    fromDatabase:
-      name: emostore-db
-      property: host
+  - type: web
+    name: emostore-backend
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 8081
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: emostore-db
+          property: host
       - key: DB_PORT
         fromDatabase:
           name: emostore-db
@@ -27,11 +28,11 @@ services:
         fromDatabase:
           name: emostore-db
           property: database
-      - key: DB_USER
+      - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: emostore-db
           property: user
-      - key: DB_PASSWORD
+      - key: SPRING_DATASOURCE_PASSWORD
         fromDatabase:
           name: emostore-db
           property: password
@@ -58,9 +59,9 @@ services:
   - type: static
     name: emostore-frontend
     env: static
-    rootDir: frontend
+    rootDirectory: frontend
     buildCommand: npm install && npm run build
-    publishPath: dist
+    publishDir: dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
